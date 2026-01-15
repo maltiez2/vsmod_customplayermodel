@@ -1,0 +1,29 @@
+{
+    "BaseShapeCode": "playermodellib:seraph", // Will use this base shape to auto adjust clothes and armor shapes, though you need to use same shape structure as base shape (you find those in the lib assets folder), currently available: "seraph" and "digitigrade" (WIP)
+    "WearableModelReplacers": { // Will replace shapes of wearable items when this model is in use. Specify item code (supports wildacrds) and path to shape.
+
+    },
+    "WearableCompositeModelReplacers": { // Will replace shapes of wearable items when this model is in use. Specify item code (supports wildacrds) and shape in shape  CompositeSHape format.
+
+    },
+    "WearableModelReplacersByShape": { // Will replace shapes of wearable items (and shape overlays) when this model is in use. Specify path to origin shape and to new shape.
+
+    },
+    "CollisionBox": [ 0.6, 1.85 ], // If specified will override collision and selection boxes
+    "EyeHeight": 1.7, // If specified will override eye height.
+    "SizeRange": [ 0.8, 1.2 ], // Will limit how far player can change model size using slider in character creation window.
+    "ScaleColliderWithSizeHorizontally": true, // If set to true player collision box width will be scaled with model size.
+    "ScaleColliderWithSizeVertically": true, // If set to true player collision box height will be scaled with model size.
+    "MaxCollisionBox": [ 1.0, 1.99 ], // Will prevent collision box to extend past this size when scaled with model size.
+    "MinCollisionBox": [ 0.1, 0.1 ], // Will prevent collision box to shrink past this size when scaled with model size,
+    "MaxEyeHeight":  1.95, // Upper limit to eye height when scaled with model size
+    "MinEyeHeight":  1.0, // Lower limit to eye height when scaled with model size
+    "AddTags": ["skeleton", "undead"], // Additional entity tags, dont add dynamic tags (like "state-onground")
+    "RemoveTags": ["seraph"], // Tags that will be removed from entity, dont remove dynamic tags (like "state-onground")
+    "ModelSizeFactor": 0.9, // Additional scaling factor for model,
+    "HeadBobbingScale": 1.0, // Scales head bobbing amplitude, use it to reduce head bobbing for small models
+    "GuiModelScale": 1.0, // Resizes model when displayed in GUI,
+    "WalkEyeHeightMultiplier": 0.9, // Eye and collier height modifier when walking forwards or sideways
+    "SprintEyeHeightMultiplier": 0.8, // Eye and collier height modifier when sprinting forwards or sideways
+    "SneakEyeHeightMultiplier": 0.6 // Replaces vanilla sneak eye and collier height modifier
+}

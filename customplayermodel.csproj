@@ -18,7 +18,7 @@
 
   <!-- Dependencies -->
   <ItemGroup>
-    <Dependencies Include="playermodellib" Version="1.8.1" />
+    <Dependencies Include="playermodellib" Version="1.9.1" />
   </ItemGroup>
 
   <!-- Project settings -->
@@ -59,9 +59,6 @@
   </PropertyGroup>
 
   <!-- Project item includes -->
-  <ItemGroup>
-    <Folder Include="resources\assets\customplayermodel" />
-  </ItemGroup>
 
   <!-- Formatting JSON files -->
   <PropertyGroup>
@@ -81,20 +78,20 @@
     <!-- ImGui for debug tools (requires ImGui mod installed if you call ImGui methods) -->
     <PackageReference Include="VSImGui" Version="0.0.6" />
     <!-- Vintage Story libraries -->
-    <Reference Include="VintagestoryLib" HintPath="$(GameDirectory)/VintagestoryLib.dll" Private="false"/>
-    <Reference Include="VintagestoryAPI" HintPath="$(GameDirectory)/VintagestoryAPI.dll" Private="false"/>
-    <Reference Include="VSSurvivalMod" HintPath="$(GameDirectory)/Mods/VSSurvivalMod.dll" Private="false"/>
-    <Reference Include="VSEssentials" HintPath="$(GameDirectory)/Mods/VSEssentials.dll" Private="false"/>
-    <Reference Include="VSCreativeMod" HintPath="$(GameDirectory)/Mods/VSCreativeMod.dll" Private="false"/>
-    <Reference Include="Newtonsoft.Json" HintPath="$(GameDirectory)/Lib/Newtonsoft.Json.dll" Private="false"/>
-    <Reference Include="0Harmony" HintPath="$(GameDirectory)/Lib/0Harmony.dll" Private="false"/>
-    <Reference Include="protobuf-net" HintPath="$(GameDirectory)/Lib/protobuf-net.dll" Private="false"/>
-    <Reference Include="cairo-sharp" HintPath="$(GameDirectory)/Lib/cairo-sharp.dll" Private="false"/>
-    <Reference Include="JsonDiffPatch" HintPath="$(GameDirectory)/Lib/JsonDiffPatch.dll" Private="false"/>
-    <Reference Include="cairo-sharp" HintPath="$(GameDirectory)/Lib/cairo-sharp.dll" Private="false"/>
-    <Reference Include="Tavis.JsonPatch" HintPath="$(GameDirectory)/Lib/Tavis.JsonPatch.dll" Private="false"/>
-    <Reference Include="SkiaSharp" HintPath="$(GameDirectory)/Lib/SkiaSharp.dll" Private="false"/>
-    <Reference Include="$(GameDirectory)/Lib/OpenTK*.dll" Private="false"/>
+    <Reference Include="VintagestoryLib" HintPath="$(GameDirectory)/VintagestoryLib.dll" Private="false" />
+    <Reference Include="VintagestoryAPI" HintPath="$(GameDirectory)/VintagestoryAPI.dll" Private="false" />
+    <Reference Include="VSSurvivalMod" HintPath="$(GameDirectory)/Mods/VSSurvivalMod.dll" Private="false" />
+    <Reference Include="VSEssentials" HintPath="$(GameDirectory)/Mods/VSEssentials.dll" Private="false" />
+    <Reference Include="VSCreativeMod" HintPath="$(GameDirectory)/Mods/VSCreativeMod.dll" Private="false" />
+    <Reference Include="Newtonsoft.Json" HintPath="$(GameDirectory)/Lib/Newtonsoft.Json.dll" Private="false" />
+    <Reference Include="0Harmony" HintPath="$(GameDirectory)/Lib/0Harmony.dll" Private="false" />
+    <Reference Include="protobuf-net" HintPath="$(GameDirectory)/Lib/protobuf-net.dll" Private="false" />
+    <Reference Include="cairo-sharp" HintPath="$(GameDirectory)/Lib/cairo-sharp.dll" Private="false" />
+    <Reference Include="JsonDiffPatch" HintPath="$(GameDirectory)/Lib/JsonDiffPatch.dll" Private="false" />
+    <Reference Include="cairo-sharp" HintPath="$(GameDirectory)/Lib/cairo-sharp.dll" Private="false" />
+    <Reference Include="Tavis.JsonPatch" HintPath="$(GameDirectory)/Lib/Tavis.JsonPatch.dll" Private="false" />
+    <Reference Include="SkiaSharp" HintPath="$(GameDirectory)/Lib/SkiaSharp.dll" Private="false" />
+    <Reference Include="$(GameDirectory)/Lib/OpenTK*.dll" Private="false" />
     <!-- External libraries -->
     <Reference Include="$(ExternalLibDir)/**/*.dll" Private="false" Condition="'$(ExternalLibDir)' != ''" />
   </ItemGroup>
@@ -157,8 +154,8 @@
   <!-- Archives output directory into zip and puts it into Releases folder -->
   <Target Name="ZipFiles" AfterTargets="Build" Condition=" '$(Configuration)' == 'Release' ">
     <Message Text="Pachaging into '$(ReleaseFile)'" Importance="high" />
-    <Delete Files="$(OutputPath)\$(ModId).dll" Condition="'$(ModType)' != 'code'"/>
-    <Delete Files="$(OutputPath)\$(ModId).pdb" Condition="'$(ModType)' != 'code'"/>
+    <Delete Files="$(OutputPath)\$(ModId).dll" Condition="'$(ModType)' != 'code'" />
+    <Delete Files="$(OutputPath)\$(ModId).pdb" Condition="'$(ModType)' != 'code'" />
     <Delete Files="$(OutputPath)\$(ModId).deps.json" Condition="'$(ModType)' != 'code'" />
     <MakeDir Directories="$(ReleasesDir)" />
     <Delete Files="$(ReleasePath)" />
@@ -166,8 +163,8 @@
   </Target>
   <Target Name="ZipFilesDev" AfterTargets="Build" Condition=" '$(Configuration)' == 'Debug' and '$(PackageDevBuild)' == 'true'">
     <Message Text="Pachaging into '$(ReleaseFile)'" Importance="high" />
-    <Delete Files="$(OutputPath)\$(ModId).dll" Condition="'$(ModType)' != 'code'"/>
-    <Delete Files="$(OutputPath)\$(ModId).pdb" Condition="'$(ModType)' != 'code'"/>
+    <Delete Files="$(OutputPath)\$(ModId).dll" Condition="'$(ModType)' != 'code'" />
+    <Delete Files="$(OutputPath)\$(ModId).pdb" Condition="'$(ModType)' != 'code'" />
     <Delete Files="$(OutputPath)\$(ModId).deps.json" Condition="'$(ModType)' != 'code'" />
     <MakeDir Directories="$(ReleasesDir)" />
     <Delete Files="$(ReleasePathDev)" />

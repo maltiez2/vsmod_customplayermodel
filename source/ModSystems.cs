@@ -1,16 +1,22 @@
 ﻿using PlayerModelLib;
 using ProtoBuf;
+using System.Diagnostics;
+using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
+using Vintagestory.Client;
 using Vintagestory.Common;
+using Vintagestory.GameContent;
 
 namespace CustomPlayerModel;
 
 public sealed class CustomPlayerModelClientSystem : ModSystem
 {
+    public override double ExecuteOrder() => 0.22;
+    
     public override void StartClientSide(ICoreClientAPI api)
     {
         _clientApi = api;
@@ -39,25 +45,27 @@ public sealed class CustomPlayerModelClientSystem : ModSystem
             }
         }
 
-        string playerName = api.World.Player.PlayerName.Replace('@', '_');
+        string playerUid = api.Settings.String["playeruid"].Select(character => ((ushort)character).ToString()).Aggregate((f, s) => $"{f}{s}");
 
         foreach (string folderPath in Directory.GetDirectories(rootDirectory))
         {
             CustomModelPacket modelData = new()
             {
-                Id = Path.GetFileName(folderPath.Replace('@', '_')) + "@" + playerName,
-                ModelName = Path.GetFileName(folderPath.Replace('@', '_')),
+                Id = Path.GetFileName(folderPath.Replace('-', '_').ToLower()) + "-" + playerUid,
+                ModelName = Path.GetFileName(folderPath.Replace('-', '_')),
                 Config = ReadFileIfExists(Path.Combine(folderPath, "config.json")),
-                Shape = ReadFileIfExists(Path.Combine(folderPath, "shape.json")),
-                Texture = ReadFileIfExists(Path.Combine(folderPath, "texture.png")),
-                Sounds = ReadFileIfExists(Path.Combine(folderPath, "voice.ogg"))
+                Shape = ReadFileIfExists(Path.Combine(folderPath, "custom-shape.json")),
+                Texture = ReadFileIfExists(Path.Combine(folderPath, "custom-texture.png")),
+                Sound = ReadFileIfExists(Path.Combine(folderPath, "custom-voice.ogg"))
             };
             _modelsData[modelData.Id] = modelData;
+
+            modelData.Shape = Encoding.UTF8.GetBytes(Asset.BytesToString(modelData.Shape).Replace("\"custom-texture\"", $"\"customplayermodel:{modelData.Id}\""));
         }
 
         foreach ((_, CustomModelPacket data) in _modelsData)
         {
-            _assetsManager.Add(data);
+            _assetsManager.Add(data, api);
         }
     }
 
@@ -75,7 +83,7 @@ public sealed class CustomPlayerModelClientSystem : ModSystem
     {
         foreach ((string id, CustomModelPacket data) in _modelsData)
         {
-            RegisterModel(api, id, data);
+            RegisterModel(api, id, data, enabled: true);
             _clientChannel?.SendPacket(data);
         }
 
@@ -98,49 +106,98 @@ public sealed class CustomPlayerModelClientSystem : ModSystem
 
     private void HandlePacketClient(CustomModelPacket packet)
     {
+        Debug.WriteLine($"\nHandlePacketClient: {packet.Id}\n");
         if (_modelsData.ContainsKey(packet.Id) || _clientApi == null)
         {
             return;
         }
 
-        _assetsManager.Add(packet);
-        RegisterModel(_clientApi, packet.Id, packet);
+        _modelsData.Add(packet.Id, packet);
+        _assetsManager.Add(packet, _clientApi);
+        RegisterModel(_clientApi, packet.Id, packet, enabled: false);
     }
 
     private void HandlePacketServer(IServerPlayer player, CustomModelPacket packet)
     {
+        Debug.WriteLine($"\nHandlePacketServer: {packet.Id}\n");
         if (_modelsData.ContainsKey(packet.Id) || _serverApi == null)
         {
             return;
         }
 
-        _assetsManager.Add(packet);
-        RegisterModel(_serverApi, packet.Id, packet);
+        _modelsData.Add(packet.Id, packet);
+        _assetsManager.Add(packet, _serverApi);
+        RegisterModel(_serverApi, packet.Id, packet, enabled: false);
 
         _serverChannel?.BroadcastPacket(packet, player);
     }
 
     private void HandlePacketServer(IServerPlayer player, CustomModelRequestPacket packet)
     {
+        Debug.WriteLine($"\nHandlePacketServer: CustomModelRequestPacket\n");
         foreach ((_, CustomModelPacket? data) in _modelsData)
         {
-            _serverChannel?.SendPacket(packet, player);
+            _serverChannel?.SendPacket(data, player);
         }
     }
 
-    private void RegisterModel(ICoreAPI api, string id, CustomModelPacket data)
+    private void RegisterModel(ICoreAPI api, string id, CustomModelPacket data, bool enabled)
     {
+        Debug.WriteLine($"\nRegisterModel: {id}\n");
         CustomModelsSystem system = api.ModLoader.GetModSystem<CustomModelsSystem>();
 
         string configText = Asset.BytesToString(data.Config);
         CustomPlayerModelConfig customConfig = JsonObject.FromJson(configText).AsObject<CustomPlayerModelConfig>();
         CustomModelConfig config = GetConfig(id, customConfig);
+        config.Enabled = enabled;
+        config.Name = data.ModelName;
 
         system.HotLoadCustomModel(id, config);
     }
 
     private static CustomModelConfig GetConfig(string id, CustomPlayerModelConfig config)
     {
+        SkinnablePartExtended[] skinnableParts = [
+            new SkinnablePartExtended()
+            {
+                Code = "voicetype",
+                Type = EnumSkinnableType.Voice,
+                UseDropDown = true,
+                Variants = [
+                    new()
+                    {
+                        Code = "default",
+                        Sound = $"{_domain}:sounds/{id}",
+                    }
+                ]
+            },
+            new SkinnablePartExtended()
+            {
+                Code = "voicepitch",
+                Type = EnumSkinnableType.Voice,
+                UseDropDown = true,
+                Colbreak = true,
+                Variants = [
+                    new()
+                    {
+                        Code = "verylow"
+                    },
+                    new()
+                    {
+                        Code = "low"
+                    },
+                    new()
+                    {
+                        Code = "medium"
+                    },
+                    new()
+                    {
+                        Code = "high"
+                    }
+                ]
+            }
+        ];
+
         return new()
         {
             Domain = _domain,
@@ -149,6 +206,7 @@ public sealed class CustomPlayerModelClientSystem : ModSystem
             GroupIcon = "",
             ShapePath = $"{_domain}:shapes/{id}.json",
             BaseShapeCode = config.BaseShapeCode,
+            SkinnableParts = skinnableParts,
             WearableModelReplacers = config.WearableModelReplacers,
             WearableCompositeModelReplacers = config.WearableCompositeModelReplacers,
             WearableModelReplacersByShape = config.WearableModelReplacersByShape,
@@ -174,19 +232,6 @@ public sealed class CustomPlayerModelClientSystem : ModSystem
     }
 }
 
-public sealed class CustomPlayerModelServerSystem : ModSystem
-{
-    public override void StartServerSide(ICoreServerAPI api)
-    {
-        _api = api;
-        _channel = _api.Network.RegisterChannel("CustomPlayerModel:model")
-            .RegisterMessageType<CustomModelPacket>();
-    }
-
-    private ICoreServerAPI? _api;
-    private IServerNetworkChannel? _channel;
-}
-
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 public sealed class CustomModelPacket
 {
@@ -195,13 +240,13 @@ public sealed class CustomModelPacket
     public byte[] Config { get; set; } = [];
     public byte[] Shape { get; set; } = [];
     public byte[] Texture { get; set; } = [];
-    public byte[] Sounds { get; set; } = [];
+    public byte[] Sound { get; set; } = [];
 }
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 public sealed class CustomModelRequestPacket
 {
-
+    public bool Data { get; set; } = false;
 }
 
 public sealed class CustomPlayerModelConfig
@@ -233,12 +278,15 @@ public sealed class CustomPlayerModelConfig
 
 public sealed class AssetsManager
 {
-    public void Add(CustomModelPacket packet)
+    public void Add(CustomModelPacket packet, ICoreAPI api)
     {
         string id = packet.Id;
-        Shapes[id] = CreateAsset($"customplayermodel:shapes/{id}.json", packet.Shape, Origin);
-        Textures[id] = CreateAsset($"customplayermodel:textures/{id}.png", packet.Texture, Origin);
-        Sounds[id] = CreateAsset($"customplayermodel:sounds/{id}.ogg", packet.Sounds, Origin);
+
+        Shapes[id] = CreateAsset($"customplayermodel:shapes/{id}.json", packet.Shape, Origin, api);
+        Textures[id] = CreateAsset($"customplayermodel:textures/{id}.png", packet.Texture, Origin, api);
+        Sounds[id] = CreateAsset($"customplayermodel:sounds/{id}.ogg", packet.Sound, Origin, api);
+
+        ScreenManager.LoadSound(Sounds[id]);
     }
 
     private Dictionary<string, IAsset> Shapes = [];
@@ -246,11 +294,14 @@ public sealed class AssetsManager
     private Dictionary<string, IAsset> Sounds = [];
     private SynchronizedDataOrigin Origin = new();
 
-    private static IAsset CreateAsset(string path, byte[] data, SynchronizedDataOrigin origin)
+    private static IAsset CreateAsset(string path, byte[] data, SynchronizedDataOrigin origin, ICoreAPI api)
     {
         Asset asset = new(data, path, origin);
 
-        origin.Assets[asset] = data;
+        origin.Assets[path] = asset;
+        origin.Data[path] = data;
+
+        api.Assets.Add(path, asset);
 
         return asset;
     }
@@ -258,12 +309,13 @@ public sealed class AssetsManager
 
 public sealed class SynchronizedDataOrigin : IAssetOrigin
 {
-    public Dictionary<IAsset, byte[]> Assets { get; set; } = [];
+    public Dictionary<string, IAsset> Assets { get; set; } = [];
+    public Dictionary<string, byte[]> Data { get; set; } = [];
 
-    string IAssetOrigin.OriginPath => throw new NotImplementedException();
-    List<IAsset> IAssetOrigin.GetAssets(AssetCategory category, bool shouldLoad) => throw new NotImplementedException();
-    List<IAsset> IAssetOrigin.GetAssets(AssetLocation baseLocation, bool shouldLoad) => throw new NotImplementedException();
+    string IAssetOrigin.OriginPath => "";
+    List<IAsset> IAssetOrigin.GetAssets(AssetCategory category, bool shouldLoad) => Assets.Values.ToList();
+    List<IAsset> IAssetOrigin.GetAssets(AssetLocation baseLocation, bool shouldLoad) => Assets.Values.ToList();
     bool IAssetOrigin.IsAllowedToAffectGameplay() => true;
-    void IAssetOrigin.LoadAsset(IAsset asset) => throw new NotImplementedException();
-    bool IAssetOrigin.TryLoadAsset(IAsset asset) => throw new NotImplementedException();
+    void IAssetOrigin.LoadAsset(IAsset asset) => asset.Data = Data[asset.Location];
+    bool IAssetOrigin.TryLoadAsset(IAsset asset) => (asset.Data = Data[asset.Location]) != null;
 }
