@@ -1,4 +1,6 @@
 {
+  // All fields here are optional, and default to seraph model values if not specified
+  
   "DisplayedName": "Skelly", // Model name displayed in model selection dialog
   "BaseShapeCode": "playermodellib:seraph", // Will use this base shape to auto adjust clothes and armor shapes, though you need to use same shape structure as base shape (you find those in the lib assets folder), currently available: "seraph" and "digitigrade" (WIP)
   "WearableModelReplacers": { // Will replace shapes of wearable items when this model is in use. Specify item code (supports wildacrds) and path to shape.
