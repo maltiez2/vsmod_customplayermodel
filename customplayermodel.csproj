@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ModName>Custom Player Model</ModName>
     <ModType>code</ModType>
-    <ModVersion>0.0.1</ModVersion>
+    <ModVersion>0.0.3</ModVersion>
     <ModId>customplayermodel</ModId>
     <Description></Description>
     <Side>universal</Side>
@@ -18,7 +18,7 @@
 
   <!-- Dependencies -->
   <ItemGroup>
-    <Dependencies Include="playermodellib" Version="1.9.1" />
+    <Dependencies Include="playermodellib" Version="1.9.2" />
   </ItemGroup>
 
   <!-- Project settings -->
