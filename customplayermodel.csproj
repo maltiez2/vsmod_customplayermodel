@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ModName>Custom Player Model</ModName>
     <ModType>code</ModType>
-    <ModVersion>0.0.3</ModVersion>
+    <ModVersion>0.2.0</ModVersion>
     <ModId>customplayermodel</ModId>
     <Description></Description>
     <Side>universal</Side>
@@ -18,7 +18,7 @@
 
   <!-- Dependencies -->
   <ItemGroup>
-    <Dependencies Include="playermodellib" Version="1.9.2" />
+    <Dependencies Include="playermodellib" Version="1.9.9" />
   </ItemGroup>
 
   <!-- Project settings -->
@@ -94,6 +94,9 @@
     <Reference Include="$(GameDirectory)/Lib/OpenTK*.dll" Private="false" />
     <!-- External libraries -->
     <Reference Include="$(ExternalLibDir)/**/*.dll" Private="false" Condition="'$(ExternalLibDir)' != ''" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="resources\assets\customplayermodel\textures\icons\" />
   </ItemGroup>
 
   <!-- Creating local settings file -->

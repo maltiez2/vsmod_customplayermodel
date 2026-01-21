@@ -1,0 +1,83 @@
+{
+  "version": 0,
+  "patches": {
+  },
+  "settings": [
+    {
+      "type": "separator",
+      "title": "customplayermodel:setting-title-white-list",
+      "collapsible": true
+    },
+    {
+      "code": "players_white_list",
+      "type": "boolean",
+      "ingui": "customplayermodel:setting-players_white_list",
+      "default": false
+    },
+    {
+      "code": "models_white_list",
+      "type": "boolean",
+      "ingui": "customplayermodel:setting-models_white_list",
+      "default": false
+    },
+    {
+      "code": "shapes_white_list",
+      "type": "boolean",
+      "ingui": "customplayermodel:setting-shapes_white_list",
+      "default": false
+    },
+    {
+      "code": "textures_white_list",
+      "type": "boolean",
+      "ingui": "customplayermodel:setting-textures_white_list",
+      "default": false
+    },
+    {
+      "code": "sounds_white_list",
+      "type": "boolean",
+      "ingui": "customplayermodel:setting-sounds_white_list",
+      "default": false
+    },
+    {
+      "type": "separator",
+      "title": "customplayermodel:setting-title-model-config",
+      "collapsible": true
+    },
+    {
+      "code": "config_traits_and_class",
+      "type": "boolean",
+      "ingui": "customplayermodel:setting-config_traits_and_class",
+      "default": true
+    },
+    {
+      "code": "config_collision_box",
+      "type": "boolean",
+      "ingui": "customplayermodel:setting-config_collision_box",
+      "default": true
+    },
+    {
+      "code": "config_eye_height",
+      "type": "boolean",
+      "ingui": "customplayermodel:setting-config_eye_height",
+      "default": true
+    },
+    {
+      "code": "config_step_height",
+      "type": "boolean",
+      "ingui": "customplayermodel:setting-config_step_height",
+      "default": true
+    },
+    {
+      "code": "config_size",
+      "type": "boolean",
+      "ingui": "customplayermodel:setting-config_size",
+      "default": true
+    },
+    {
+      "code": "config_oxygen",
+      "type": "boolean",
+      "ingui": "customplayermodel:setting-config_oxygen",
+      "default": true
+    }
+  ]
+}

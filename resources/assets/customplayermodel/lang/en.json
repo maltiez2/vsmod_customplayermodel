@@ -1,4 +1,18 @@
 {
   "game:playermodel-customplayermodel": "Custom model",
-  "game:skinpart-voicetype-default": "Custom"
+  "game:skinpart-voicetype-default": "Custom",
+
+  "customplayermodel:setting-title-white-list": "White list settings",
+  "customplayermodel:setting-title-model-config": "Model config settings",
+  "customplayermodel:setting-players_white_list": "Enable players white list",
+  "customplayermodel:setting-models_white_list": "Enable models white list",
+  "customplayermodel:setting-shapes_white_list": "Enable shapes white list",
+  "customplayermodel:setting-textures_white_list": "Enable textures white list",
+  "customplayermodel:setting-sounds_white_list": "Enable sounds white list",
+  "customplayermodel:setting-config_traits_and_class": "Enable traits and classes customisation",
+  "customplayermodel:setting-config_collision_box": "Enable collision box customisation",
+  "customplayermodel:setting-config_eye_height": "Enable eye height customisation",
+  "customplayermodel:setting-config_step_height": "Enable step height customisation",
+  "customplayermodel:setting-config_size": "Enable size customisation",
+  "customplayermodel:setting-config_oxygen": "Enable oxygen customisation"
 }
