@@ -1,4 +1,5 @@
-﻿using PlayerModelLib;
+﻿using OverhaulLib.Utils;
+using PlayerModelLib;
 using System.Security.Cryptography;
 using Vintagestory.API.Common;
 
@@ -69,11 +70,11 @@ public class WhiteList
         Textures.Add(textureHash);
         Sounds.Add(soundHash);
 
-        AddHashLogEntry(shapeHash, "shape", player);
-        AddHashLogEntry(textureHash, "texture", player);
-        AddHashLogEntry(soundHash, "sound", player);
+        AddHashLogEntry(shapeHash, "shape", player, modelData.ModelName);
+        AddHashLogEntry(textureHash, "texture", player, modelData.ModelName);
+        AddHashLogEntry(soundHash, "sound", player, modelData.ModelName);
 
-        LoggerUtil.Notify(api, this, $"Added texture, shape and sound to white list from model '{modelData.ModelName}' from player '{player}'");
+		Log.Notify(api, this, $"Added texture, shape and sound to white list from model '{modelData.ModelName}' from player '{player}'");
 
         Store(api);
     }
@@ -84,9 +85,9 @@ public class WhiteList
 
         Shapes.Add(shapeHash);
 
-        AddHashLogEntry(shapeHash, "shape", player);
+        AddHashLogEntry(shapeHash, "shape", player, modelData.ModelName);
 
-        LoggerUtil.Notify(api, this, $"Added shape to white list from model '{modelData.ModelName}' from player '{player}'");
+        Log.Notify(api, this, $"Added shape to white list from model '{modelData.ModelName}' from player '{player}'");
 
         Store(api);
     }
@@ -97,9 +98,9 @@ public class WhiteList
 
         Textures.Add(textureHash);
 
-        AddHashLogEntry(textureHash, "texture", player);
+        AddHashLogEntry(textureHash, "texture", player, modelData.ModelName);
 
-        LoggerUtil.Notify(api, this, $"Added texture to white list from model '{modelData.ModelName}' from player '{player}'");
+        Log.Notify(api, this, $"Added texture to white list from model '{modelData.ModelName}' from player '{player}'");
 
         Store(api);
     }
@@ -110,9 +111,9 @@ public class WhiteList
 
         Sounds.Add(soundHash);
 
-        AddHashLogEntry(soundHash, "sound", player);
+        AddHashLogEntry(soundHash, "sound", player, modelData.ModelName);
 
-        LoggerUtil.Notify(api, this, $"Added sound to white list from model '{modelData.ModelName}' from player '{player}'");
+        Log.Notify(api, this, $"Added sound to white list from model '{modelData.ModelName}' from player '{player}'");
 
         Store(api);
     }
@@ -127,7 +128,7 @@ public class WhiteList
         Textures.Remove(textureHash);
         Sounds.Remove(soundHash);
 
-        LoggerUtil.Notify(api, this, $"Removed texture, shape and sound from white list from model '{modelData.ModelName}' from player '{player}'");
+        Log.Notify(api, this, $"Removed texture, shape and sound from white list from model '{modelData.ModelName}' from player '{player}'");
 
         Store(api);
     }
@@ -138,7 +139,7 @@ public class WhiteList
 
         Shapes.Remove(shapeHash);
 
-        LoggerUtil.Notify(api, this, $"Removed shape from white list from model '{modelData.ModelName}' from player '{player}'");
+        Log.Notify(api, this, $"Removed shape from white list from model '{modelData.ModelName}' from player '{player}'");
 
         Store(api);
     }
@@ -149,7 +150,7 @@ public class WhiteList
 
         Textures.Remove(textureHash);
 
-        LoggerUtil.Notify(api, this, $"Removed texture from white list from model '{modelData.ModelName}' from player '{player}'");
+        Log.Notify(api, this, $"Removed texture from white list from model '{modelData.ModelName}' from player '{player}'");
 
         Store(api);
     }
@@ -160,7 +161,7 @@ public class WhiteList
 
         Sounds.Remove(soundHash);
 
-        LoggerUtil.Notify(api, this, $"Removed sound from white list from model '{modelData.ModelName}' from player '{player}'");
+        Log.Notify(api, this, $"Removed sound from white list from model '{modelData.ModelName}' from player '{player}'");
 
         Store(api);
     }
@@ -175,7 +176,7 @@ public class WhiteList
 
         Players.Add(playerUid);
 
-        LoggerUtil.Notify(api, this, $"Added player '{player.PlayerName}' to white list");
+        Log.Notify(api, this, $"Added player '{player.PlayerName}' to white list");
 
         Store(api);
     }
@@ -184,7 +185,7 @@ public class WhiteList
     {
         Players.Add(uid);
 
-        LoggerUtil.Notify(api, this, $"Added player '{playerName}' to white list");
+        Log.Notify(api, this, $"Added player '{playerName}' to white list");
 
         Store(api);
     }
@@ -199,7 +200,7 @@ public class WhiteList
 
         Players.Remove(playerUid);
 
-        LoggerUtil.Notify(api, this, $"Removed player '{player.PlayerName}' from white list");
+        Log.Notify(api, this, $"Removed player '{player.PlayerName}' from white list");
 
         Store(api);
     }
@@ -208,7 +209,7 @@ public class WhiteList
     {
         Players.Remove(uid);
 
-        LoggerUtil.Notify(api, this, $"Removed player '{playerName}' from white list");
+        Log.Notify(api, this, $"Removed player '{playerName}' from white list");
 
         Store(api);
     }
@@ -217,10 +218,10 @@ public class WhiteList
     
     private const string _whiteListFile = "custom-player-models-white-list.json";
 
-    private void AddHashLogEntry(string hash, string type, string playerName)
+    private void AddHashLogEntry(string hash, string type, string playerName, string modelName)
     {
         string timeStamp = DateTime.Now.ToString("yy-MM-dd-HH-mm-ss");
-        string entry = $"{timeStamp}    {type}    {playerName}    {hash}";
+        string entry = $"{timeStamp}    {type}    {modelName}    {playerName}    {hash}";
         HashLog.Add(entry);
     }
 }

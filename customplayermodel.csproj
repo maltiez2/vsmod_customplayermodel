@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ModName>Custom Player Model</ModName>
     <ModType>code</ModType>
-    <ModVersion>0.2.0</ModVersion>
+    <ModVersion>0.3.0</ModVersion>
     <ModId>customplayermodel</ModId>
     <Description></Description>
     <Side>universal</Side>
@@ -18,12 +18,12 @@
 
   <!-- Dependencies -->
   <ItemGroup>
-    <Dependencies Include="playermodellib" Version="1.9.9" />
+    <Dependencies Include="playermodellib" Version="1.15.0" />
   </ItemGroup>
 
   <!-- Project settings -->
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <ImplicitUsings>enable</ImplicitUsings>

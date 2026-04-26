@@ -1,4 +1,5 @@
 ﻿using ConfigLib;
+using OverhaulLib.Utils;
 using PlayerModelLib;
 using System.Text;
 using Vintagestory.API.Client;
@@ -110,12 +111,12 @@ public sealed class CustomPlayerModelClientSystem : ModSystem
             }
             catch (UnauthorizedAccessException exception)
             {
-                LoggerUtil.Error(api, this, $"Unable to create directory for custom models: Insufficient permissions\n{exception}");
+                Log.Error(api, this, $"Unable to create directory for custom models: Insufficient permissions\n{exception}");
                 return;
             }
             catch (IOException exception)
             {
-                LoggerUtil.Error(api, this, $"Unable to create directory for custom models:\n{exception}");
+                Log.Error(api, this, $"Unable to create directory for custom models:\n{exception}");
                 return;
             }
         }
@@ -169,7 +170,7 @@ public sealed class CustomPlayerModelClientSystem : ModSystem
         {
             if (files.Count != 4)
             {
-                LoggerUtil.Error(api, this, $"Model {domain}:{modelName} does not have 4 required files, or contains extra files");
+                Log.Error(api, this, $"Model {domain}:{modelName} does not have 4 required files, or contains extra files");
                 continue;
             }
 
@@ -180,25 +181,25 @@ public sealed class CustomPlayerModelClientSystem : ModSystem
 
             if (configLocation == null)
             {
-                LoggerUtil.Error(api, this, $"Model {domain}:{modelName} does not contain config file");
+                Log.Error(api, this, $"Model {domain}:{modelName} does not contain config file");
                 continue;
             }
 
             if (shapeLocation == null)
             {
-                LoggerUtil.Error(api, this, $"Model {domain}:{modelName} does not contain shape file");
+                Log.Error(api, this, $"Model {domain}:{modelName} does not contain shape file");
                 continue;
             }
 
             if (textureLocation == null)
             {
-                LoggerUtil.Error(api, this, $"Model {domain}:{modelName} does not contain texture file");
+                Log.Error(api, this, $"Model {domain}:{modelName} does not contain texture file");
                 continue;
             }
 
             if (soundLocation == null)
             {
-                LoggerUtil.Error(api, this, $"Model {domain}:{modelName} does not contain sound file");
+                Log.Error(api, this, $"Model {domain}:{modelName} does not contain sound file");
                 continue;
             }
 
@@ -437,7 +438,7 @@ public sealed class CustomPlayerModelClientSystem : ModSystem
                 skinBehavior.SetCurrentModel(system.DefaultModelCode, system.DefaultModelData.SizeRange.X);
                 player.Entity?.WatchedAttributes.SetBool("allowcharselonce", true);
                 string message = $"Player '{player.PlayerName}' tried selecting custom model, but this player is not on white list. Player model was reset to default and player was granted 'allowcharselonce'.";
-                LoggerUtil.Warn(_serverApi, this, message);
+                Log.Warn(_serverApi, this, message);
             }, 0);
             return;
         }
@@ -449,7 +450,7 @@ public sealed class CustomPlayerModelClientSystem : ModSystem
                 skinBehavior.SetCurrentModel(system.DefaultModelCode, system.DefaultModelData.SizeRange.X);
                 player.Entity?.WatchedAttributes.SetBool("allowcharselonce", true);
                 string message = $"Player '{player.PlayerName}' tried selecting custom model, but this model is not on white list. Player model was reset to default and player was granted 'allowcharselonce'.";
-                LoggerUtil.Warn(_serverApi, this, message);
+                Log.Warn(_serverApi, this, message);
             }, 0);
         }
     }
