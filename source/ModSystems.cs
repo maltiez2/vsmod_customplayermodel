@@ -333,7 +333,16 @@ public sealed class CustomPlayerModelClientSystem : ModSystem
         CustomModelsSystem system = api.ModLoader.GetModSystem<CustomModelsSystem>();
 
         string configText = Asset.BytesToString(data.Config);
-        JsonObject json = JsonObject.FromJson(configText);
+        JsonObject json;
+        try
+        {
+            json = JsonObject.FromJson(configText);
+        }
+        catch (Exception exception)
+        {
+            Log.Error(api, this, $"Tried to parse custom model '{id}'.\n Exception: {exception}");
+            return;
+        }
         CustomModelConfig config = GetConfig(id, json.AsObject<CustomModelConfig>(), new CustomModelConfig(), json["DisplayedName"]?.AsString(), Settings);
         config.Enabled = enabled;
         config.Name ??= data.ModelName;
