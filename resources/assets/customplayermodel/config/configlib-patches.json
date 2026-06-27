@@ -9,6 +9,17 @@
       "collapsible": true
     },
     {
+      "code": "max_packet_size",
+      "type": "integer",
+      "ingui": "customplayermodel:setting-max_packet_size",
+      "logarithmic": true,
+      "default": 2000000,
+      "range": {
+        "min": 1000000,
+        "max": 10000000
+      }
+    },
+    {
       "code": "players_white_list",
       "type": "boolean",
       "ingui": "customplayermodel:setting-players_white_list",

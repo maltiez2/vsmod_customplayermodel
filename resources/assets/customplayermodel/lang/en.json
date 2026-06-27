@@ -2,6 +2,7 @@
   "game:playermodel-customplayermodel": "Custom model",
   "game:skinpart-voicetype-default": "Custom",
 
+  "customplayermodel:setting-max_packet_size": "Max network packet size (in bytes)",
   "customplayermodel:setting-title-white-list": "White list settings",
   "customplayermodel:setting-title-model-config": "Model config settings",
   "customplayermodel:setting-players_white_list": "Enable players white list",
@@ -14,5 +15,7 @@
   "customplayermodel:setting-config_eye_height": "Enable eye height customisation",
   "customplayermodel:setting-config_step_height": "Enable step height customisation",
   "customplayermodel:setting-config_size": "Enable size customisation",
-  "customplayermodel:setting-config_oxygen": "Enable oxygen customisation"
+  "customplayermodel:setting-config_oxygen": "Enable oxygen customisation",
+
+  "customplayermodel:setting-comment-max_packet_size": "Some models exceed vanilla max packet size. By default it is now twice the vanilla restriction."
 }

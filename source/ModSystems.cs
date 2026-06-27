@@ -1,6 +1,7 @@
 ﻿using ConfigLib;
 using OverhaulLib.Utils;
 using PlayerModelLib;
+using System;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -12,6 +13,7 @@ using Vintagestory.API.Util;
 using Vintagestory.Common;
 using Vintagestory.GameContent;
 using Vintagestory.Server;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CustomPlayerModel;
 
@@ -77,7 +79,7 @@ public sealed class CustomPlayerModelClientSystem : ModSystem
 
     public override void AssetsFinalize(ICoreAPI api)
     {
-
+        _modelRegistrationEnabled = true;
 
         foreach ((string id, CustomModelPacket data) in _modelsData)
         {
@@ -85,10 +87,20 @@ public sealed class CustomPlayerModelClientSystem : ModSystem
             _clientChannel?.SendPacket(data);
         }
 
+        while (_registerModelTasks.Count > 0)
+        {
+            CustomModelRegisterTask task = _registerModelTasks.Dequeue();
+            RegisterModel(api, task.Id, task.Packet, task.Enabled);
+            _clientChannel?.SendPacket(task.Packet);
+        }
+
         _clientChannel?.SendPacket(new CustomModelRequestPacket());
     }
 
+
+
     private const string _customModelsFolder = "custom-player-models";
+    private readonly Queue<CustomModelRegisterTask> _registerModelTasks = [];
     private readonly Dictionary<string, CustomModelPacket> _modelsData = [];
     private readonly Dictionary<string, string> _playersPerModels = [];
     private readonly AssetsManager _assetsManager = new();
@@ -98,6 +110,7 @@ public sealed class CustomPlayerModelClientSystem : ModSystem
     private ICoreServerAPI? _serverApi;
     private IServerNetworkChannel? _serverChannel;
     private readonly WhiteList _whiteList = new();
+    private bool _modelRegistrationEnabled = false;
 
     private void LoadModelsFromFiles(ICoreClientAPI api)
     {
@@ -330,6 +343,12 @@ public sealed class CustomPlayerModelClientSystem : ModSystem
 
     private void RegisterModel(ICoreAPI api, string id, CustomModelPacket data, bool enabled)
     {
+        if (!_modelRegistrationEnabled)
+        {
+            _registerModelTasks.Enqueue(new(id, data, enabled));
+            return;
+        }
+
         CustomModelsSystem system = api.ModLoader.GetModSystem<CustomModelsSystem>();
 
         string configText = Asset.BytesToString(data.Config);
@@ -343,7 +362,15 @@ public sealed class CustomPlayerModelClientSystem : ModSystem
             Log.Error(api, this, $"Tried to parse custom model '{id}'.\n Exception: {exception}");
             return;
         }
-        CustomModelConfig config = GetConfig(id, json.AsObject<CustomModelConfig>(), new CustomModelConfig(), json["DisplayedName"]?.AsString(), Settings);
+        
+        CustomModelConfig? configFromPacket = json.AsObject<CustomModelConfig>();
+        if (configFromPacket == null)
+        {
+            Log.Error(api, this, $"Failed to parse custom model '{id}'.");
+            return;
+        }
+
+        CustomModelConfig config = GetConfig(id, configFromPacket, new CustomModelConfig(), json["DisplayedName"]?.AsString(), Settings);
         config.Enabled = enabled;
         config.Name ??= data.ModelName;
 
@@ -473,11 +500,13 @@ public sealed class CustomPlayerModelClientSystem : ModSystem
             if (domain != "customplayermodel") return;
 
             setting.AssignSettingValue(Settings);
+            CustomPlayerModelPatchesSystem.MaxPacketSize = Settings.MaxPacketSize;
         };
 
         system.ConfigsLoaded += () =>
         {
             system.GetConfig("customplayermodel")?.AssignSettingsValues(Settings);
+            CustomPlayerModelPatchesSystem.MaxPacketSize = Settings.MaxPacketSize;
         };
     }
 

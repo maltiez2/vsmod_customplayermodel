@@ -13,6 +13,13 @@ public sealed class CustomModelPacket
     public byte[] Sound { get; set; } = [];
 }
 
+public readonly struct CustomModelRegisterTask(string id, CustomModelPacket packet, bool enabled)
+{
+    public readonly string Id = id;
+    public readonly CustomModelPacket Packet = packet;
+    public readonly bool Enabled = enabled;
+}
+
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 public sealed class CustomModelRequestPacket
 {

@@ -8,6 +8,8 @@ public class Settings
     public bool TexturesWhiteList { get; set; } = false;
     public bool SoundsWhiteList { get; set; } = false;
 
+    public int MaxPacketSize { get; set; } = 2_000_000;
+
     public bool ConfigTraitsAndClass {  get; set; } = true;
     public bool ConfigCollisionBox { get; set; } = true;
     public bool ConfigEyeHeight { get; set; } = true;
